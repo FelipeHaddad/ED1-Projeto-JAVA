@@ -1,4 +1,5 @@
 # ED1-Projeto-JAVA
+# Avaliador de Expressões Matemáticas
 ## Funcionamento do Programa
 Desenvolver um programa em Java que implementa um REPL (Read-Evaluate-Print-Loop) que aceita entradas via teclado e que avalia e valida as entradas de acordo com os requisitos descritos a seguir.
 ### Expressões matemáticas
