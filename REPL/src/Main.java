@@ -15,8 +15,7 @@ https://how.dev/answers/what-is-characterisletter-in-java -> Como ver se o carac
  public class Main {
      public static void main(String[] args) {
          // Listas que vão armazenar as variáveis declaradas e seus valores
-         List<String> listaVars = new ArrayList<String>();
-         List<Integer> valores = new ArrayList<Integer>();
+        
  
          // Valor que será utilizado para manter o loop ativo
          boolean valor = true;
