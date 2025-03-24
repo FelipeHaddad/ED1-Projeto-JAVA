@@ -11,16 +11,38 @@ public class Array <T> {
     private T array[];
     private int posicao = 0;
 
+    public Array(int tamanho) {
+        this.array = (T[]) new Object[tamanho];
+        this.posicao = 0;
+    }
+
+    public Array() {
+        this.array = (T[]) new Object[15];
+        this.posicao = 0;
+    }
+
+    public T seeElement (int indice) {
+        return array[indice];
+    }
+
 
     public void addElement(T element) {
-        array[posicao] = element;
-        posicao++;
+        if (!arrayFull()) {
+            this.array[posicao] = element;
+            posicao++;
+        }
     }
 
     public void seeElements() {
-        for (int j = 0; j <= array.length; j++) {
-            System.out.print(array[j]);
+        System.out.print("[");
+        for (int j = 0; j < array.length; j++) {
+            if (j == ((array.length) - 1)) {
+                System.out.print(array[j]);
+            } else {
+                System.out.print(array[j] + ", ");
+            }
         }
+        System.out.print("]");
     }
 
     public boolean arrayEmpty() {
@@ -31,7 +53,7 @@ public class Array <T> {
     }
 
     public boolean arrayFull () {
-        if (posicao == array.length) {
+        if (posicao == this.array.length) {
             return true;
         }
         return false;
