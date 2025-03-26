@@ -13,17 +13,26 @@ Como transformar caractere em inteiro, mostrando o valor numerico e não em ASCI
 https://www.scaler.com/topics/char-to-int-in-java/
  */
 
- import commands.vars.Array;
- import commands.vars.Fila;
  import java.util.Scanner;
+
+ import commands.vars.*;
+ 
+ import static java.lang.Integer.parseInt;
  
  public class Main {
      public static void main(String[] args) {
          // Listas que vão armazenar as variáveis declaradas e seus valores
          Array<Character> vars = new Array<>();
          Array<Integer> valores = new Array<>();
+ 
          // Fila que vai armazenar o REC
          Fila<String> rec = new Fila<>();
+ 
+         // Pilha para as expressões matemática infixas
+         Pilha<Character> pilha = new Pilha<>();
+ 
+         // String saida que vai armazenar a expressão posfixa
+         String saida = "";
  
  
          Scanner scanner = new Scanner(System.in);
@@ -33,7 +42,9 @@ https://www.scaler.com/topics/char-to-int-in-java/
  
              /* System.out.print("Menu de comandos:\n1. Expressão Matemática Infixa\n2. <VAR>=<VALUE>\n3. VARS\n4. " +
                              "RESET\n5. REC\n6. STOP\n7. PLAY\n8. ERASE\n9. EXIT\nDigite sua opção: ");
- */
+             */
+ 
+ 
              String user = scanner.nextLine();
              // Deixa tudo em letra Maiúscula
              user = user.toUpperCase();
@@ -41,43 +52,47 @@ https://www.scaler.com/topics/char-to-int-in-java/
              // Remove todos os espaços
              opcao = opcao.replaceAll("\\s", "");
  
+             /*
+             opcao.charAt(i) == '+' || opcao.charAt(i) == '(' || opcao.charAt(i) == ')' || opcao.charAt(i) == '-' || opcao.charAt(i) == '/'
+              */
  
-             //Opcao expressao matematica infixa
-             if (opcao.equalsIgnoreCase("Expressão Matemática Infixa")){
-                 valor = false;
- 
-             }
- 
- 
- 
-             //Opcao VAR = VALUE
-             else if (Character.isLetter(opcao.charAt(0)) && ((opcao.charAt(1) == '=') || (opcao.charAt(1) == '+') ||
-                     (opcao.charAt(1) == '-') || (opcao.charAt(1) == '*') || (opcao.charAt(1) == '/') || (opcao.charAt(1) == '%'))){
- 
-                 if (opcao.charAt(0) >= 'A' && opcao.charAt(0) <= 'Z') {
-                     if (opcao.charAt(1) == '=') {
-                         if (Character.isDigit(opcao.charAt(2))) {
-                             vars.addElement(opcao.charAt(0));
-                             int number = Character.getNumericValue(opcao.charAt(2));
-                             valores.addElement(number);
-                             System.out.println(user);
-                         } else {
-                             System.out.print("Erro comando inválido");
-                         }
+             //Opcao expressao matematica infixa transformando para posfixa
+             for (int i = 0; i < opcao.length(); i++) {
+                 if (opcao.charAt(i) == '(') {
+                     try {
+                         pilha.push(opcao.charAt(i));
+                     } catch (Exception e) {
+                         System.out.print("Erro: " + e.getMessage());
                      }
-                 } else {
-                     System.out.println("Erro: comando inválido.");
+                 }
+ 
+                 else if (opcao.charAt(i) == ')') {
+                     try {
+                         for (int j = 0; j < opcao.length(); j++) {
+                             if (opcao.charAt(i) == ')') {
+                                 break;
+                             } else {
+                                 saida += pilha.pop();
+                             }
+                         }
+                     } catch (Exception e) {
+                         System.out.println("Erro: " + e.getMessage());
+                     }
+                 }
+                 
+                 else if (Character.isLetter(opcao.charAt(i))) {
+                     saida += opcao.charAt(i);
                  }
              }
  
  
- 
-             else if (opcao.equalsIgnoreCase("VARS")){
-                 // Se a lista de variáveis estiver vazia da print que não foi definida nenhuma variável
+             // Opção VARS
+             if (opcao.equalsIgnoreCase("VARS")){
+                 // Se a lista de variáveis estiver vazia imprime que não foi definida nenhuma variável
                  if (vars.arrayEmpty()) {
                      System.out.println("Nenhuma variável definida.");
                  } else {
-                     // Usa loop for e vai dando print em cada variável com seu respectivo valor até o momento que ele
+                     // Usa loop for e vai imprimindo cada variável com seu respectivo valor até o momento que ele
                      // encontrar um null
                      for (int i = 0; i < 15; i++) {
                          if (vars.seeElement(i) != null) {
@@ -91,12 +106,15 @@ https://www.scaler.com/topics/char-to-int-in-java/
  
  
              //Opcao de RESET
-             else if (opcao.equalsIgnoreCase("RESET")||opcao.equals("4")) {
-                 valor = false;
- 
- 
+             else if (opcao.equalsIgnoreCase("RESET")) {
+                 for (int i = 0; i < 10; i++) {
+                     vars.removeElement(i);
+                     valores.removeElement(i);
+                 }
+                 System.out.print("Variáveis reiniciadas.");
              }
  
+             // Opção REC
              else if (opcao.equals("REC")){
                  if (!rec.qIsEmpty()) {
                      for (int i = 0; i < 10; i++) {
@@ -132,14 +150,21 @@ https://www.scaler.com/topics/char-to-int-in-java/
  
              }
  
-             else if (opcao.equalsIgnoreCase("STOP")||opcao.equals("6")){
-                 valor = false;
+             // Opção STOP
+             else if (opcao.equalsIgnoreCase("STOP")){
+                 System.out.println("Não há gravação para ser encerrada");
+             }
+ 
+             // Opção PLAY
+             else if (opcao.equalsIgnoreCase("PLAY")){
+                 if (!rec.qIsEmpty()) {
+                     System.out.println("Reproduzindo gravação...");
+ 
+                 }
  
              }
-             else if (opcao.equalsIgnoreCase("PLAY")||opcao.equals("7")){
-                 valor = false;
  
-             }
+             // Opção ERASE
              else if (opcao.equals("ERASE")){
                  if (!rec.qIsEmpty()) {
                      for (int i = 0; i < 10; i++) {
@@ -158,9 +183,31 @@ https://www.scaler.com/topics/char-to-int-in-java/
                  System.out.println("Programa Encerrado");
                  break;
              }
-             else{
+ 
+             //Opcao VAR = VALUE
+             else if (opcao.charAt(0) >= 'A' && opcao.charAt(0) <= 'Z') {
+ 
+                 // Caso o segundo caractere seja =
+                 if (opcao.charAt(1) == '=') {
+                     if (Character.isDigit(opcao.charAt(2))) {
+                         vars.addElement(opcao.charAt(0));
+                         int number = Character.getNumericValue(opcao.charAt(2));
+                         valores.addElement(number);
+                         System.out.println(user);
+                     } else {
+                         System.out.print("Erro comando inválido");
+                     }
+                 }
+                 else {
+                     System.out.println("Erro: comando inválido.");
+                 }
+             }
+ 
+             else {
                  System.out.println("Erro: Comando Inválido");
              }
+ 
+ 
  
  
  
