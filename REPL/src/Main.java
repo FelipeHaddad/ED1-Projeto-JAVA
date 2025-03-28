@@ -147,6 +147,7 @@ https://www.scaler.com/topics/char-to-int-in-java/
                          recLoop = false;
                      }
                  }
+                 
  
              }
  
@@ -159,6 +160,7 @@ https://www.scaler.com/topics/char-to-int-in-java/
              else if (opcao.equalsIgnoreCase("PLAY")){
                  if (!rec.qIsEmpty()) {
                      System.out.println("Reproduzindo gravação...");
+                     
  
                  }
  
@@ -195,16 +197,20 @@ https://www.scaler.com/topics/char-to-int-in-java/
                          valores.addElement(number);
                          System.out.println(user);
                      } else {
-                         System.out.print("Erro comando inválido");
+                         System.out.print("Erro comando inválido.");
+                         
                      }
                  }
                  else {
                      System.out.println("Erro: comando inválido.");
+                     
+
                  }
              }
  
              else {
-                 System.out.println("Erro: Comando Inválido");
+                 System.out.println("Erro: Comando Inválido.");
+                 continue;
              }
  
  
