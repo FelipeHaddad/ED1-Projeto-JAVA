@@ -11,6 +11,18 @@ Como ver se um caractere é um numero
     https://stackoverflow.com/questions/4047808/what-is-the-best-way-to-tell-if-a-character-is-a-letter-or-number-in-java-withou
 Como transformar caractere em inteiro, mostrando o valor numerico e não em ASCII
 https://www.scaler.com/topics/char-to-int-in-java/
+Como criar a prioridade de operação - CHAT GPT
+Pergunta: Estou tentando fazer um avaliador de expressão infixa. No momento preciso transformar uma expressão infixa
+para posfixa, mas não consigo pensar em uma forma de comparar as prioridades de operadores
+Resposta:
+precedencia = {
+    '+': 1,
+    '-': 1,
+    '*': 2,
+    '/': 2,
+    '^': 3
+}
+
  */
 
 import java.util.Scanner;
@@ -30,6 +42,7 @@ public class Main {
         // Pilha para as expressões matemática infixas
         Pilha<Character> pilha = new Pilha<>();
 
+
         // String saida que vai armazenar a expressão posfixa
         String saida = "";
 
@@ -42,9 +55,8 @@ public class Main {
 
         while (valor) {
 
-            /* System.out.print("Menu de comandos:\n1. Expressão Matemática Infixa\n2. <VAR>=<VALUE>\n3. VARS\n4. " +
-                            "RESET\n5. REC\n6. STOP\n7. PLAY\n8. ERASE\n9. EXIT\nDigite sua opção: ");
-            */
+            pilha.seeElements();
+            System.out.println("Saida: " + saida);
 
             /* Condicional para caso o play seja ativado */
             if (play) {
@@ -67,23 +79,106 @@ public class Main {
             }
 
             //Opcao expressao matematica infixa transformando para posfixa
-            for (int i = 0; i < opcao.length(); i++) {
+            // A*(B+C)/D -> ABC+*D/
+            // a+b
+            for (int i = 0; i <= opcao.length(); i++) {
+                char simbolo = opcao.charAt(i);
 
                 pilha.seeElements();
+                System.out.println("Saida: " + saida);
 
                 if (i == (opcao.length() - 1) ) {
+                    if (Character.isLetterOrDigit(simbolo)) {
+                        saida += simbolo;
+                    }
                     while(!pilha.isEmpty()) {
                         try {
                             saida += pilha.pop();
                         } catch (Exception e) {
                             System.out.print("Erro: " + e.getMessage());
                         }
+                    } break;
+                }
+
+                else if (Character.isLetterOrDigit(simbolo)) {
+                    saida += simbolo;
+                }
+
+                else if (simbolo == '(') {
+                    try {
+                        pilha.push(simbolo);
+                    } catch (Exception e) {
+                        System.out.println("Erro: " + e.getMessage());
                     }
                 }
 
-                else if (true) {
-
+                else if (simbolo == ')') {
+                    try {
+                        while (!pilha.isEmpty() && pilha.topo() != '(') {
+                                saida += pilha.pop();
+                        }
+                        pilha.pop();
+                        continue;
+                    } catch (Exception e) {
+                        System.out.println("Erro: " + e.getMessage());
+                    }
                 }
+
+                else if (pilha.isEmpty()) {
+                    try {
+                        pilha.push(simbolo);
+                    } catch (Exception e) {
+                        System.out.println("Erro: " + e.getMessage());
+                    }
+                }
+
+                else if (simbolo == '+' || simbolo == '-') {
+                        try {
+                            if (pilha.topo() == '(' || pilha.topo() == ')') {
+                                pilha.push(simbolo);
+                                continue;
+                            } else {
+                                saida += pilha.pop();
+                                pilha.push(simbolo);
+                                continue;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
+                    }
+
+                    if (simbolo == '*' || simbolo == '/') {
+                        try {
+                            if (pilha.topo() != '*' || pilha.topo() != '/' || pilha.topo() != '^') {
+                                pilha.push(simbolo);
+                                continue;
+                            } else {
+                                saida += pilha.pop();
+                                pilha.push(simbolo);
+                                continue;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
+                    }
+                    if (simbolo == '^') {
+                        try {
+                            if (pilha.topo() != '^') {
+                                pilha.push(simbolo);
+                                continue;
+                            } else {
+                                saida += pilha.pop();
+                                pilha.push(simbolo);
+                                continue;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
+                    }
+
+
+
+
             }
 
                 /*
@@ -248,9 +343,9 @@ public class Main {
                                 System.out.println(opcao);
 
                             }
-                    } else { System.out.print("Erro comando inválido"); }
-                } else { System.out.println("Erro: comando inválido."); }
-            } else { System.out.println("Erro: Comando Inválido"); }
+                    } else { System.out.print("Erro comando inválido 1"); }
+                } else { System.out.println("Erro: comando inválido 2"); }
+            } else { System.out.println("Erro: Comando Inválido 3"); }
         }
         scanner.close();
     }
