@@ -51,6 +51,7 @@ public class Pilha <T> {
         if (!isFull()) {
             pilha[posicao] = element;
             posicao++;
+            quantidade++;
         } throw new Exception("Pilha cheia!");
     }
 
@@ -60,9 +61,11 @@ public class Pilha <T> {
             aux = pilha[posicao - 1];
             pilha[posicao - 1] = null;
             posicao--;
+            quantidade--;
             return aux;
         } throw new Exception("Pilha vazia!");
     }
+
 
 
     public static void main (String[] args) {
