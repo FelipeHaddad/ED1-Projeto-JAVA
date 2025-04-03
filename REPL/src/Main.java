@@ -42,6 +42,8 @@ public class Main {
         // Pilha para as expressões matemática infixas
         Pilha<Character> pilha = new Pilha<>();
 
+        // Pilha para cálculo das expressões posfixas
+        Pilha<Integer> pilhaPosfixa = new Pilha<>();
 
         // String saida que vai armazenar a expressão posfixa
         String saida = "";
@@ -50,8 +52,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         // Valor que será utilizado para manter o loop ativo
         boolean valor = true;
+        // Valor que será utilizado para verificar se deve roda a opção PLAY
         boolean play = false;
+        // Inicializa a opcao
         String opcao = "";
+        // Valor que será utilizado para dizer que a expressão infixa está invalida
+        boolean infixaErro = false;
+        // Valor que será utilizado para calcular a expressão posfixa
+        boolean posFixa = false;
 
         while (valor) {
 
@@ -78,38 +86,93 @@ public class Main {
                 opcao = opcao.replaceAll("\\s", "");
             }
 
+            //Opcao VAR = VALUE
+            if (opcao.charAt(0) >= 'A' && opcao.charAt(0) <= 'Z') {
+
+                // Caso o segundo caractere seja =
+                if (opcao.charAt(1) == '=') {
+                    if (Character.isDigit(opcao.charAt(2))) {
+                        String numero = "";
+                        numero += opcao.charAt(2);
+                        for (int j = 3; j < opcao.length(); j++) {
+                            numero += opcao.charAt(j);
+                        }
+
+                        // Percorre a lista vars para ver se o caractere já existe
+                        if (vars.searchElement(opcao.charAt(0))) {
+                            // Caso encontre a variável, guarda sua posição
+                            int pos = vars.elementPosition(opcao.charAt(0));
+                            // Pega o valor numérico da string
+                            valores.changeElement(pos, Integer.parseInt(numero));
+                            // Imprime o que o usuário digitou
+                            System.out.println(opcao);
+                            continue;
+
+                        } else { // Caso não encontre a variável já definida na lista
+                            // Adiciona a variável na lista
+                            vars.addElement(opcao.charAt(0));
+                            // Adiciona o valor numérico na lista dos números
+                            valores.addElement(Integer.parseInt(numero));
+                            // Imprime o que o usuário digitou
+                            System.out.println(opcao);
+                            continue;
+                        }
+                    } else { System.out.print("Erro comando inválido"); }
+                } else {continue;}
+            } else {continue;}
+
             //Opcao expressao matematica infixa transformando para posfixa
             // A*(B+C)/D -> ABC+*D/
-            // a+b
+
             for (int i = 0; i <= opcao.length(); i++) {
                 char simbolo = opcao.charAt(i);
 
                 pilha.seeElements();
                 System.out.println("Saida: " + saida);
 
+                // Verifica se já está no final da opcao
                 if (i == (opcao.length() - 1) ) {
+                    // Se tiver verifica se o caractere atual é um dígito e adiciona ele
                     if (Character.isLetterOrDigit(simbolo)) {
                         saida += simbolo;
                     }
+                    // Esvazia toda a pilha
                     while(!pilha.isEmpty()) {
                         try {
                             saida += pilha.pop();
-                        } catch (Exception e) {
-                            System.out.print("Erro: " + e.getMessage());
+                        } catch (Exception ignored) { }
+                    }
+                    // Verifica se tem algum ( sem fechamento e caso tenha invalida a expressão
+                    for (int j = 0; j < opcao.length(); j++ ) {
+                        if (opcao.charAt(j) == '(' || opcao.charAt(j) == ')') {
+                            System.out.println("Erro: expressão inválida.");
+                            infixaErro = true;
+                            break;
                         }
-                    } break;
+                    }
+                    if (infixaErro) {
+                        posFixa = false;
+                        break;
+                    } else {
+                        posFixa = true;
+                        break;
+                    }
                 }
 
-                else if (Character.isLetterOrDigit(simbolo)) {
+                else if (Character.isLetter(simbolo)) {
                     saida += simbolo;
+                }
+
+                else if (Character.isDigit(simbolo)) {
+                    System.out.println("Erro: não deve ter números na expressão infixa");
+                    infixaErro = true;
+                    break;
                 }
 
                 else if (simbolo == '(') {
                     try {
                         pilha.push(simbolo);
-                    } catch (Exception e) {
-                        System.out.println("Erro: " + e.getMessage());
-                    }
+                    } catch (Exception ignored) { }
                 }
 
                 else if (simbolo == ')') {
@@ -118,18 +181,15 @@ public class Main {
                                 saida += pilha.pop();
                         }
                         pilha.pop();
-                        continue;
-                    } catch (Exception e) {
-                        System.out.println("Erro: " + e.getMessage());
-                    }
+
+
+                    } catch (Exception ignored) { }
                 }
 
                 else if (pilha.isEmpty()) {
                     try {
                         pilha.push(simbolo);
-                    } catch (Exception e) {
-                        System.out.println("Erro: " + e.getMessage());
-                    }
+                    } catch (Exception ignored) { }
                 }
 
                 else if (simbolo == '+' || simbolo == '-') {
@@ -142,26 +202,22 @@ public class Main {
                                 pilha.push(simbolo);
                                 continue;
                             }
-                        } catch (Exception e) {
-                            System.out.println("Erro: " + e.getMessage());
-                        }
+                        } catch (Exception ignored) { }
                     }
 
-                    if (simbolo == '*' || simbolo == '/') {
+                else if (simbolo == '*' || simbolo == '/') {
                         try {
                             if (pilha.topo() != '*' || pilha.topo() != '/' || pilha.topo() != '^') {
-                                pilha.push(simbolo);
-                                continue;
-                            } else {
                                 saida += pilha.pop();
                                 pilha.push(simbolo);
                                 continue;
+                            } else {
+                                pilha.push(simbolo);
+                                continue;
                             }
-                        } catch (Exception e) {
-                            System.out.println("Erro: " + e.getMessage());
-                        }
+                        } catch (Exception ignored) { }
                     }
-                    if (simbolo == '^') {
+                else if (simbolo == '^') {
                         try {
                             if (pilha.topo() != '^') {
                                 pilha.push(simbolo);
@@ -171,46 +227,92 @@ public class Main {
                                 pilha.push(simbolo);
                                 continue;
                             }
-                        } catch (Exception e) {
-                            System.out.println("Erro: " + e.getMessage());
-                        }
+                        } catch (Exception ignored) { }
                     }
-
-
-
-
             }
 
-                /*
-                if (opcao.charAt(i) == '(') {
-                    try {
-                        pilha.push(opcao.charAt(i));
-                    } catch (Exception e) {
-                        System.out.print("Erro: " + e.getMessage());
-                    }
-                }
+            if (infixaErro) {
+                System.out.println("Erro na expressão infixa!");
+                infixaErro = false;
+                break;
+            }
 
-                else if (opcao.charAt(i) == ')') {
-                    try {
-                        for (int j = 0; j < opcao.length(); j++) {
-                            if (opcao.charAt(i) == '(') {
-                                break;
-                            } else {
-                                saida += pilha.pop();
-                            }
+            // Cálculo das expressões Posfixas
+            if (posFixa) {
+
+                // Resultado vai armazenar a operação entre o valor 1 e o valor 2
+                int resultado = 0, valor1, valor2;
+
+                // Vai percorrer cada caractere da saida adquirida na expressão posfixa
+                for (int i = 0; i < saida.length(); i++){
+
+                    if (i == saida.length() - 1) {
+                        System.out.println(resultado);
+                    }
+                    // Armazena o caractere atual na variável caractere
+                    char caractere = saida.charAt(i);
+
+                    // Verifica se o caractere da saida é uma letra
+                    if (Character.isLetter(caractere)) {
+
+                        // Verifica se o caractere existe
+                        if (vars.searchElement(caractere)) {
+                            int pos = vars.elementPosition(caractere);
+                            pilhaPosfixa.push(valores.seeElement(pos));
+                        } else {
+                            System.out.print("Variável " + caractere + " não definida");
                         }
-                    } catch (Exception e) {
-                        System.out.println("Erro: " + e.getMessage());
+
+                    }
+                    else if (caractere == '+') {
+                        try {
+                            valor1 = pilhaPosfixa.pop();
+                            valor2 = pilhaPosfixa.pop();
+                            resultado = valor1 + valor2;
+                            pilhaPosfixa.push(resultado);
+                        } catch (Exception ignored) {}
+                    }
+                    else if (caractere == '-') {
+                        try {
+                            valor1 = pilhaPosfixa.pop();
+                            valor2 = pilhaPosfixa.pop();
+                            resultado = valor1 - valor2;
+                            pilhaPosfixa.push(resultado);
+                        } catch (Exception ignored) {}
+                    }
+                    else if (caractere == '*') {
+                        try {
+                            valor1 = pilhaPosfixa.pop();
+                            valor2 = pilhaPosfixa.pop();
+                            resultado = valor1 * valor2;
+                            pilhaPosfixa.push(resultado);
+                        } catch (Exception ignored) {}
+                    }
+                    else if (caractere == '/') {
+                        try {
+                            valor1 = pilhaPosfixa.pop();
+                            valor2 = pilhaPosfixa.pop();
+                            resultado = valor1 / valor2;
+                            pilhaPosfixa.push(resultado);
+                        } catch (Exception ignored) {}
+                    }
+                    else if (caractere == '^') {
+                        try {
+                            valor1 = pilhaPosfixa.pop();
+                            valor2 = pilhaPosfixa.pop();
+                            resultado = 1;
+                            for (int j = 1; j <= valor2; j++) {
+                                resultado *= valor1;
+                            }
+                            pilhaPosfixa.push(resultado);
+                        } catch (Exception ignored) {}
                     }
                 }
+            }
 
-                else if (Character.isLetter(opcao.charAt(i))) {
-                    saida += opcao.charAt(i);
-                }
-            } */
 
             // Opção VARS
-            if (opcao.equalsIgnoreCase("VARS")){
+            else if (opcao.equalsIgnoreCase("VARS")){
                 // Se a lista de variáveis estiver vazia imprime que não foi definida nenhuma variável
                 if (vars.arrayEmpty()) {
                     System.out.println("Nenhuma variável definida.");
@@ -311,41 +413,6 @@ public class Main {
                 System.out.println("Programa Encerrado");
                 break;
             }
-
-            //Opcao VAR = VALUE
-            else if (opcao.charAt(0) >= 'A' && opcao.charAt(0) <= 'Z') {
-
-                // Caso o segundo caractere seja =
-                if (opcao.charAt(1) == '=') {
-                    if (Character.isDigit(opcao.charAt(2))) {
-                        String numero = "";
-                        numero += opcao.charAt(2);
-                        for (int j = 3; j < opcao.length(); j++) {
-                            numero += opcao.charAt(j);
-                        }
-
-                        // Percorre a lista vars para ver se o caractere já existe
-                            if (vars.searchElement(opcao.charAt(0))) {
-                                // Caso encontre a variável, guarda sua posição
-                                int pos = vars.elementPosition(opcao.charAt(0));
-                                // Pega o valor numérico da string
-                                valores.changeElement(pos, Integer.parseInt(numero));
-                                // Imprime o que o usuário digitou
-                                System.out.println(opcao);
-
-
-                            } else { // Caso não encontre a variável já definida na lista
-                                // Adiciona a variável na lista
-                                vars.addElement(opcao.charAt(0));
-                                // Adiciona o valor numérico na lista dos números
-                                valores.addElement(Integer.parseInt(numero));
-                                // Imprime o que o usuário digitou
-                                System.out.println(opcao);
-
-                            }
-                    } else { System.out.print("Erro comando inválido 1"); }
-                } else { System.out.println("Erro: comando inválido 2"); }
-            } else { System.out.println("Erro: Comando Inválido 3"); }
         }
         scanner.close();
     }
