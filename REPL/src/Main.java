@@ -100,7 +100,7 @@ public class Main {
 
             // Opção VARS
             if (opcao.equals("VARS")){
-                
+
                 // Se a lista de variáveis estiver vazia imprime que não foi definida nenhuma variável
                 if (vars.arrayEmpty()) {
                     System.out.println("Nenhuma variável definida.");
@@ -123,10 +123,14 @@ public class Main {
 
             //Opcao de RESET
             else if (opcao.equals("RESET")) {
+
+                // Loop para remover todos os elementos
                 for (int i = 0; i < 10; i++) {
                     vars.removeElement(i);
                     valores.removeElement(i);
                 }
+
+                // Reinicia as posições dos objetos vars e valores
                 vars.setPosicao(0);
                 valores.setPosicao(0);
                 System.out.println("Variáveis reiniciadas.");
@@ -136,10 +140,12 @@ public class Main {
             // Opção REC
             else if (opcao.equals("REC")){
 
-                // Apaga o rec anterior sempre que se escreve um rec
+                // Verifica se o rec está vazio
                 if (rec.qIsEmpty()) {
                     System.out.println("Iniciando gravação... (REC: 0/10)");
-                } else {
+                }
+                // Caso não esteja, continua a gravação
+                else {
                     System.out.println("Continuando gravação... (REC: " + count + "/10)");
                 }
                 boolean recLoop = true;
@@ -168,16 +174,21 @@ public class Main {
                             break;
                         }
 
-                        // Caso não seja STOP
+                        // Caso não seja STOP, verifica se é um dos comandos proibidos
                         else if (element.equals("PLAY") || element.equals("ERASE") || element.equals("REC")  ) {
                             System.out.println("Erro: comando inválido para gravação");
                         }
+
+                        // Se passar pelas condicionais, apenas adiciona no array e aumenta o contador
                         else {
                             count++;
                             System.out.println("(REC: " + count + "/10) " + word);
                             rec.enqueue(element);
                         }
-                    } else {
+                    }
+
+                    // Se o rec estiver cheio, ele para a gravação
+                    else {
                         System.out.println("REC CHEIO");
                         System.out.println("Encerrando gravação");
                         break;
@@ -185,7 +196,7 @@ public class Main {
                 } continue;
             }
 
-            // Opção STOP
+            // Opção STOP (como não está dentro do rec, simplesmente imprime que não tem gravação)
             else if (opcao.equals("STOP")){
                 System.out.println("Não há gravação para ser encerrada");
             }
@@ -193,32 +204,43 @@ public class Main {
             // Opção PLAY
             else if (opcao.equals("PLAY")){
 
+                // Se a fila rec estiver com algum elemento, começa a reprodução colocando o valor play em true
                 if (!rec.qIsEmpty()) {
                     System.out.println("Reproduzindo gravação...");
                     play = true;
-                } else {
+                }
+
+                // Caso contrário, imprime que não tem gravação para ser reproduzida
+                else {
                     System.out.println("Não há gravação para ser reproduzida");
                 }
                 continue;
             }
 
+
             // Opção ERASE
             else if (opcao.equals("ERASE")){
+
+                // Enquanto a fila rec estiver vazia vai eliminando os elementos
                 while (!rec.qIsEmpty()) {
                     rec.dequeue();
                 }
+
+                // Reinicia a primeira e ultima posição do objeto rec
                 rec.setPriposicao(0);
                 rec.setUltposicao(0);
                 System.out.println("Gravação apagada.");
-                count = 0;
+                count = 0; // Reinicia o contador
                 continue;
             }
+
 
             //Opcao de EXIT
             else if (opcao.equals("EXIT")){
                 System.out.println("Programa Encerrado");
                 break;
             }
+
 
             // Ver valor de UMA variável
             else if (opcao.length() == 1 && Character.isLetter(opcao.charAt(0))) {
@@ -230,14 +252,23 @@ public class Main {
                 } continue;
             }
 
+
             //Opcao VAR = VALUE
             else if (opcao.charAt(0) >= 'A' && opcao.charAt(0) <= 'Z') {
 
-                // Caso o segundo caractere seja =
+                // Caso o segundo caractere seja " = "
                 if (opcao.charAt(1) == '=') {
+
+                    // Verifica se o 2 caractere é um numero
                     if (Character.isDigit(opcao.charAt(2))) {
+
+                        // Inicia uma string numero (possibilita armazenar numeros maiores que 9)
                         String numero = "";
+
+                        // Adiciona na string o numero que estiver na posição 2 da opcao
                         numero += opcao.charAt(2);
+
+                        // Adiciona o resto dos numeros dentro da string
                         for (int j = 3; j < opcao.length(); j++) {
                             numero += opcao.charAt(j);
                         }
@@ -257,27 +288,40 @@ public class Main {
                             continue;
 
                         } else {
+
                             // Caso não encontre a variável já definida na lista
                             // Adiciona a variável na lista
                             vars.addElement(opcao.charAt(0));
+
                             // Adiciona o valor numérico na lista dos números
                             valores.addElement(Integer.parseInt(numero));
+
                             // Imprime o que o usuário digitou
                             System.out.println(opcao);
                             continue;
                         }
+
                     } else { System.out.print("Erro comando inválido"); }
                 }
             }
 
+            // Verifica se a opcao se trata de uma expressão infixa, procurando por operadores
             for (int i = 0; i < opcao.length(); i++) {
+
+                // Caso encontre algum, declara INFIXA como true
                 if (opcao.charAt(i) == '+' || opcao.charAt(i) == '-' || opcao.charAt(i) == '/' || opcao.charAt(i) == '*' || opcao.charAt(i) == '^' || opcao.charAt(i) == '(' || opcao.charAt(i) == ')') {
                     INFIXA = true;
                 }
+
+                // Se encontrar algum elemento que não seja algum dos operadores
                 else if (!Character.isLetterOrDigit(opcao.charAt(i))) {
-                    if (play){
+
+                    // Verifica se está no play
+                    if (play) {
                         System.out.println(opcao);
                     }
+
+                    // Imprime operador invalido
                     System.out.println("Erro: operador inválido");
                     operadorInvalido = true;
                     INFIXA=true;
@@ -285,16 +329,22 @@ public class Main {
             }
 
             if (INFIXA) {
+
+                // Se tiver um operador invalido não permite calcular a expressão
                 if (operadorInvalido) {
                     operadorInvalido = false;
                     continue;
                 }
+
+                // Caso esteja em play imprime a expressão
                 if (play) {
                     System.out.println(opcao);
                 }
 
+                // Contadores para verificar ( )
                 int contadorAbre = 0, contadorFecha = 0;
 
+                // Conta quantas ( e ) existem e caso seja um valor diferente não permite ser calculado
                 for (int i = 0; i < opcao.length(); i++) {
                     if (opcao.charAt(i) == '(') {
                         contadorAbre += 1;
@@ -400,22 +450,24 @@ public class Main {
                             pilha.push(simbolo);
                         } catch (Exception ignored) { }
                     }
-                     
+
                     //Verifica se o simbolo é + ou -
                     else if (simbolo == '+' || simbolo == '-') {
                         try {
-                     // Verifica se o topo da pilha contém um parêntese aberto '(' ou fechado ')'
+
+                            // Verifica se o topo da pilha contém um parêntese aberto '(' ou fechado ')'
                             if (pilha.topo() == '(' || pilha.topo() == ')') {
-                             // Se for o caso, simplesmente empilha o operador atual
+                                // Se for o caso, simplesmente empilha o operador atual
                                 pilha.push(simbolo);
 
                             } else {
-                             // Caso contrário, desempilha o topo e adiciona à saída antes de empilhar o novo operador
+                                // Caso contrário, desempilha o topo e adiciona à saída antes de empilhar o novo operador
                                 saida += pilha.pop();
                                 pilha.push(simbolo);
                             }
                         } catch (Exception ignored) { }
                     }
+
                     // Se o símbolo for '*' ou '/'
                     else if (simbolo == '*' || simbolo == '/') {
                         try {
@@ -423,11 +475,13 @@ public class Main {
                             if (pilha.topo() != '*' || pilha.topo() != '/' || pilha.topo() != '^') {
                                 saida += pilha.pop();
                                 pilha.push(simbolo);
+
                             } else {
                                 // Caso contrário, apenas empilha o operador
                                 pilha.push(simbolo);
+
                             }
-                        } catch (Exception ignored) { } // Captura exceções, mas as ignora
+                        } catch (Exception ignored) { }  // Captura exceções, mas as ignora
                     }
 
                     // Se o símbolo for '^' (exponenciação)
@@ -441,8 +495,9 @@ public class Main {
                                 saida += pilha.pop();
                                 pilha.push(simbolo);
                             }
-                        } catch (Exception ignored) { } // Captura exceções, mas as ignora
+                        } catch (Exception ignored) { }
                     }
+                }
 
                 // Caso tenha dado erro na expressão infixa, se mostra a mensagem de erro
                 if (infixaErro) {
