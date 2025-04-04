@@ -1,7 +1,7 @@
 /* 1° Felipe Bertacco Haddad - 10437372
  * 2° Ana Julia Yaguti - 10436655
  * 3° Beatriz Nobrega - 10435789
-*/
+ */
 
 package commands.vars;
 
