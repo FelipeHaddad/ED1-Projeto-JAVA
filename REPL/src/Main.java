@@ -351,6 +351,7 @@ public class Main {
                         }
                     }
 
+                    //Verifica se a expressao esta correta; ex: x - TESTE
                     else if (Character.isLetter(simbolo)) {
                         if (i + 1 < opcao.length() && Character.isLetter(opcao.charAt(i + 1))) {
                             System.out.println("Erro: expressão inválida.");
@@ -367,18 +368,21 @@ public class Main {
                         }
                     }
 
+                    //Verifica se tem numeros na expressao infixa
                     else if (Character.isDigit(simbolo)) {
                         System.out.println("Erro: não deve ter números na expressão infixa");
                         infixaErro = true;
                         break;
                     }
 
+                    //Verifica se é um (, se for coloca na pilha
                     else if (simbolo == '(') {
                         try {
                             pilha.push(simbolo);
                         } catch (Exception ignored) { }
                     }
 
+                    //Verifica se é um (, se fore ele coloca na saida tudo ate o ) e depois o tira da pilha
                     else if (simbolo == ')') {
                         try {
                             while (!pilha.isEmpty() && pilha.topo() != '(') {
@@ -390,47 +394,55 @@ public class Main {
                         } catch (Exception ignored) { }
                     }
 
+                    //Se a pilha estiver vazia coloca o primeiro operador
                     else if (pilha.isEmpty()) {
                         try {
                             pilha.push(simbolo);
                         } catch (Exception ignored) { }
                     }
-
+                     
+                    //Verifica se o simbolo é + ou -
                     else if (simbolo == '+' || simbolo == '-') {
                         try {
+                     // Verifica se o topo da pilha contém um parêntese aberto '(' ou fechado ')'
                             if (pilha.topo() == '(' || pilha.topo() == ')') {
+                             // Se for o caso, simplesmente empilha o operador atual
                                 pilha.push(simbolo);
 
                             } else {
+                             // Caso contrário, desempilha o topo e adiciona à saída antes de empilhar o novo operador
                                 saida += pilha.pop();
                                 pilha.push(simbolo);
                             }
                         } catch (Exception ignored) { }
                     }
-
+                    // Se o símbolo for '*' ou '/'
                     else if (simbolo == '*' || simbolo == '/') {
                         try {
+                            // Se o topo da pilha não for '*', '/' ou '^', desempilha o operador para a saída
                             if (pilha.topo() != '*' || pilha.topo() != '/' || pilha.topo() != '^') {
                                 saida += pilha.pop();
                                 pilha.push(simbolo);
-
                             } else {
+                                // Caso contrário, apenas empilha o operador
                                 pilha.push(simbolo);
-
                             }
-                        } catch (Exception ignored) { }
+                        } catch (Exception ignored) { } // Captura exceções, mas as ignora
                     }
+
+                    // Se o símbolo for '^' (exponenciação)
                     else if (simbolo == '^') {
                         try {
+                            // Se o topo da pilha não for '^', empilha o operador
                             if (pilha.topo() != '^') {
                                 pilha.push(simbolo);
                             } else {
+                                // Caso contrário, desempilha o operador e depois empilha o novo
                                 saida += pilha.pop();
                                 pilha.push(simbolo);
                             }
-                        } catch (Exception ignored) { }
+                        } catch (Exception ignored) { } // Captura exceções, mas as ignora
                     }
-                }
 
                 // Caso tenha dado erro na expressão infixa, se mostra a mensagem de erro
                 if (infixaErro) {
