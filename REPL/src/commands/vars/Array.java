@@ -1,7 +1,7 @@
 /* 1° Felipe Bertacco Haddad - 10437372
  * 2° Ana Julia Yaguti - 10436655
  * 3° Beatriz Nobrega - 10435789
-*/
+ */
 
 package commands.vars;
 
@@ -28,6 +28,15 @@ public class Array <T> {
         this.array[indice] = element;
     }
 
+    public void substituteElement(T element, int pos) {
+        if (!arrayFull()) {
+            this.array[pos] = element;
+        }
+    }
+
+    public void setPosicao (int number) {
+        this.posicao = number;
+    }
 
     public void addElement(T element) {
         if (!arrayFull()) {
@@ -39,6 +48,7 @@ public class Array <T> {
     public void removeElement(int indice) {
         if (!arrayFull()) {
             this.array[indice] = null;
+            posicao--;
         }
     }
 
@@ -73,7 +83,7 @@ public class Array <T> {
     }
 
     public boolean arrayEmpty() {
-        if (posicao == 0) {
+        if (this.seeElement(0) == null) {
             return true;
         }
         return false;
