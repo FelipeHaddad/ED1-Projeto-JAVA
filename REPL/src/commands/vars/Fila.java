@@ -1,7 +1,7 @@
 /* 1° Felipe Bertacco Haddad - 10437372
  * 2° Ana Julia Yaguti - 10436655
  * 3° Beatriz Nobrega - 10435789
-*/
+ */
 
 package commands.vars;
 
@@ -48,7 +48,15 @@ public class Fila <T> {
         fila[priPosicao] = null;
         priPosicao++;
         return aux;
-        }
+    }
+
+    public void setPriposicao (int number) {
+        this.priPosicao = number;
+    }
+
+    public void setUltposicao (int number) {
+        this.ultPosicao = number;
+    }
 
     public T front () {
         return fila[priPosicao];
